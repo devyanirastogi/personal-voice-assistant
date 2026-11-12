@@ -1,0 +1,7 @@
+[models]
+chat = "qwen3.5:4b"
+embed = "nomic-embed-text"
+
+[paths]
+appointments_db = "data/appointments.db"
+memory_dir = "data/qdrant" 
