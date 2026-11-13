@@ -72,11 +72,3 @@ def remove_appointment(appointment_id):
     db.close()
     return deleted
 
-if __name__ == "__main__":
-    first = add_appointment("2024-06-15 15:00", "Chicago", "Dentist", "Teeth Cleaning") # Add a test appointment
-    print ("Added id", first) 
-    print ("changed:", change_appointment(first, title="Dentist Appointment")) # Change the title of the appointment
-    print("deleted:", remove_appointment(first)) # Delete the appointment
-    print("deleted again:", remove_appointment(first)) # Try to delete it again, should return False
-    print (get_appointments()) # Print all appointments to verify it was added; should be an empty list in this case
-

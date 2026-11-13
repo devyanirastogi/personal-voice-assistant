@@ -13,10 +13,10 @@ def create_appointment(date: str, location: str, title: str, description: str = 
     """Save a new appointment and return its id.
 
     Args:
-        date: When the appointment is, as YYYY-MM-DD HH:MM in 24-hour time, e.g. 2026-11-13 15:00.
-        location: Where it takes place, e.g. Chicago. Never guess this; ask the user if unknown.
-        title: Short name of the appointment, e.g. Dentist.
-        description: Optional extra details.
+        date: When the appointment is, as YYYY-MM-DD HH:MM in 24-hour time. Use only a date and time the user actually stated.
+        location: Where it takes place. Use only a place the user actually said. If they did not say one, do not call this tool; ask them first.
+        title: Short name of the appointment, taken from the user's own words.
+        description: Optional extra details. Leave empty unless the user gave some.
     """
     if not _check_date(date):                        # Reject a badly formatted date
         return {"success": False, "error": "date must look like YYYY-MM-DD HH:MM"}
@@ -65,10 +65,3 @@ def delete_appointment(appointment_id: int) -> dict:
     if db.remove_appointment(appointment_id):        # True only if a row really was deleted
         return {"success": True, "deleted_id": appointment_id}
     return {"success": False, "error": f"no appointment with id {appointment_id}"}
-
-
-if __name__ == "__main__":                           # Quick manual test: python tools.py
-    print(create_appointment("2026-11-13 15:00", "Chicago", "Dentist"))   # Should succeed
-    print(create_appointment("2026-11-13 15:00", "", "Dentist"))          # Should fail: no location
-    print(create_appointment("tomorrow at 3", "Chicago", "Dentist"))      # Should fail: bad date
-    print(list_appointments())

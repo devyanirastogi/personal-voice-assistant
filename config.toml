@@ -2,6 +2,8 @@
 think = false
 chat = "qwen3.5:4b"
 embed = "nomic-embed-text"
+keep_alive = "30m"
+context = 8192
 
 [paths]
 appointments_db = "data/appointments.db"
