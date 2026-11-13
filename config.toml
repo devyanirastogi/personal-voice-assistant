@@ -1,4 +1,5 @@
 [models]
+think = false
 chat = "qwen3.5:4b"
 embed = "nomic-embed-text"
 
