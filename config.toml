@@ -13,3 +13,12 @@ memory_dir = "data/qdrant"
 voice = "Samantha"
 rate = 190
 acknowledge = "Okay."
+
+[audio]
+sample_rate = 16000
+block_ms = 50
+silence_seconds = 0.6
+preroll_seconds = 0.3
+noise_multiplier = 3.0
+min_threshold = 0.01
+max_seconds = 20

@@ -42,7 +42,8 @@ def system_prompt():
 The current date and time is {now}.
 Calendar for the next days: {upcoming_days()}.
 Rules:
-- Convert day names to dates using the calendar above. A weekday name means the soonest such day after today. Never work out dates yourself.
+- Convert day names to dates u\\
+    sing the calendar above. A weekday name means the soonest such day after today. Never work out dates yourself.
 - If the date, the time, or the location is missing or unclear (for example "at 3" with no AM or PM), ask one short question. Never guess or invent them.
 - Never say something was booked, moved or deleted unless the tool just returned success. Read the id from the tool result.
 - To delete: first find the appointment, ask the user to confirm with yes or no, and call delete only after they say yes.
