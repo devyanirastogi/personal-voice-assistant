@@ -8,3 +8,8 @@ context = 8192
 [paths]
 appointments_db = "data/appointments.db"
 memory_dir = "data/qdrant" 
+
+[speech]
+voice = "Samantha"
+rate = 190
+acknowledge = "Okay."
