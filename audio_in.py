@@ -58,6 +58,9 @@ def listen_utterances(is_muted=lambda: False):
                 if quiet_blocks >= END_BLOCKS or len(utterance) >= MAX_BLOCKS:   # Speech ended.
                     if loud_blocks >= MIN_LOUD_BLOCKS:
                         yield np.concatenate(utterance)  # Hand the full utterance to the caller.
+                        pending = stream.read_available
+                        if pending:
+                            stream.read(pending)   # Throw away any extra blocks that arrived while we were yielding.
                     speaking = False
                     utterance = []
                     preroll.clear()

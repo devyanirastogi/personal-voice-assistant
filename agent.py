@@ -149,6 +149,10 @@ def ask(user_text, on_sentence=None):
 
     return "Sorry, I got stuck."
 
+def warm_up():
+    """Load the model into memory now, so the first real command isn't slow."""
+    ollama.chat(model=CHAT, messages=[{"role": "user", "content": "hi"}],
+                think=THINK, keep_alive=KEEP_ALIVE, options={"num_ctx": CONTEXT})
 
 if __name__ == "__main__":
     while True:

@@ -1,13 +1,13 @@
 [models]
-think = false
 chat = "qwen3.5:4b"
 embed = "nomic-embed-text"
+think = false
 keep_alive = "30m"
 context = 8192
 
 [paths]
 appointments_db = "data/appointments.db"
-memory_dir = "data/qdrant" 
+memory_dir = "data/qdrant"
 
 [speech]
 voice = "Samantha"
@@ -22,3 +22,14 @@ preroll_seconds = 0.3
 noise_multiplier = 3.0
 min_threshold = 0.01
 max_seconds = 20
+echo_tail_seconds = 0.5
+
+[stt]
+model = "mlx-community/whisper-small-mlx"
+language = "en"
+prompt = "Loop."
+
+[wake]
+words = ["loop", "loops", "loupe", "lupe", "loup"]
+follow_up_seconds = 8
+wake_reply = "Yes?"

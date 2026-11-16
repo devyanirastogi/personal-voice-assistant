@@ -2,3 +2,4 @@ ollama
 qdrant-client
 sounddevice
 numpy
+mlx-whisper
