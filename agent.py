@@ -88,7 +88,7 @@ def grounding_error(name, args):
     return None                                  # All good: the booking may go ahead.
 
 
-def ask(user_text, on_sentence=None):
+def ask(user_text, on_sentence=None, trace=None):
     """Run one user message through the agent. Calls on_sentence(text) for each finished sentence."""
     history.append({"role": "user", "content": user_text})
     memories = memory.search(user_text)      # Find stored facts related to this request.
@@ -158,6 +158,8 @@ def ask(user_text, on_sentence=None):
                 except TypeError as error:
                     result = {"success": False, "error": str(error)}
             print(f"   [tool] {name}({args}) -> {result}")
+            if trace is not None:            # Record the tool call so the web page can show it.
+                trace.append({"tool": name, "args": args, "result": result})
             history.append({"role": "tool", "tool_name": name, "content": json.dumps(result)})
 
     return "Sorry, I got stuck."
