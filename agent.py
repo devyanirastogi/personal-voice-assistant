@@ -61,6 +61,12 @@ def recent_user_text(last_n=3):
 
 def grounding_error(name, args):
     """Return an error dict if a booking uses values the user never said, otherwise None."""
+    if name == "delete_appointment":         # Deleting needs an explicit yes from the user.
+        last = recent_user_text(1)           # Only the user's most recent message.
+        if not re.search(r"\b(yes|yeah|yep|yup|sure|confirm|do it|go ahead)\b", last):
+            return {"success": False,
+                    "error": "The user has not confirmed. Ask the user to say yes or no before deleting."}
+        return None                          # Confirmed: the delete may go ahead.
     if name != "create_appointment":             # Only check bookings.
         return None
     said = recent_user_text()                    # What the user actually said recently.

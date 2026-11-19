@@ -48,7 +48,8 @@ def handle(text):
         return
 
     print(f"   [command] {command}")
-    agent.ask(command, on_sentence=speech.speak)     # Run the agent; sentences are spoken as they arrive.
+    reply = agent.ask(command, on_sentence=speech.speak)    # Run the agent and keep its reply text.
+    print(f"   [reply] {reply}")                            # Show what Loop said, for the check.
     speech.wait_until_done()                 # Wait for the voice to finish before listening again.
     needs_flush = True                          # The microphone should discard any audio that arrived while Loop was talking.
     awake_until = time.time() + FOLLOW_UP    # The window starts when the reply ENDS.
