@@ -8,7 +8,7 @@ import time
 import re                                       # Regular expressions, for pattern matching in text.
 import speech                                   # Speak text aloud and stop mid-sentence.
 from datetime import datetime, timedelta     # timedelta lets us add days to a date.
-
+import memory
 
 config = tomllib.loads(Path("config.toml").read_text())   # Load settings.
 CHAT = config["models"]["chat"]              # Which chat model to use.
@@ -21,6 +21,7 @@ ACK = config["speech"].get("acknowledge", "")   # Short phrase spoken at once. E
 TOOLS = {f.__name__: f for f in [
     tools.create_appointment, tools.list_appointments,
     tools.update_appointment, tools.delete_appointment,
+    tools.remember # new tool for remembering personal facts
 ]}
 
 history = []                                 # The conversation so far. Kept between turns so "move it" works.
@@ -35,22 +36,25 @@ def upcoming_days():
         parts.append(f"{day.strftime('%A %Y-%m-%d')}{label}")   # e.g. "Friday 2026-11-13 (today)".
     return "; ".join(parts)                  # Join all 8 into one line.
 
-def system_prompt():
+def system_prompt(memories=()):
     """Build the rules for the model. Rebuilt every request so the date is always current."""
     now = datetime.now().strftime("%A, %Y-%m-%d %H:%M")   # Current date and time.
+    known = "\n".join(f"- {m}" for m in memories) or "- (nothing yet)"   # Code: turn the memory list into bullet lines.
     return f"""You are Loop, a voice assistant that manages the user's appointments.
 The current date and time is {now}.
 Calendar for the next days: {upcoming_days()}.
+Things you remember about the user:
+{known}
 Rules:
-- Convert day names to dates u\\
-    sing the calendar above. A weekday name means the soonest such day after today. Never work out dates yourself.
+- Convert day names to dates using the calendar above. A weekday name means the soonest such day after today. Never work out dates yourself.
 - If the date, the time, or the location is missing or unclear (for example "at 3" with no AM or PM), ask one short question. Never guess or invent them.
 - Never say something was booked, moved or deleted unless the tool just returned success. Read the id from the tool result.
 - To delete: first find the appointment, ask the user to confirm with yes or no, and call delete only after they say yes.
 - After a tool succeeds, do not call another tool to double-check. Just report the result.
 - Answer only what was asked. Do not add extra questions or offers.
-- Reply in one or two short sentences. No lists, no markdown, because your reply will be spoken aloud."""
-
+- Reply in one or two short sentences. No lists, no markdown, because your reply will be spoken aloud.
+- When the user asks you to remember something, call the remember tool.
+- Use the remembered facts to answer questions about the user's preferences."""
 
 def recent_user_text(last_n=3):
     """Return the user's last few messages joined into one lowercase string."""
@@ -87,6 +91,9 @@ def grounding_error(name, args):
 def ask(user_text, on_sentence=None):
     """Run one user message through the agent. Calls on_sentence(text) for each finished sentence."""
     history.append({"role": "user", "content": user_text})
+    memories = memory.search(user_text)      # Find stored facts related to this request.
+    if memories:
+        print(f"   [memory] recalled: {memories}")
     t0 = time.perf_counter()                 # Stopwatch for the whole request.
     spoke_first = False                      # Have we said the first sentence yet?
     if ACK and on_sentence:                  # Speak the acknowledgement immediately, before the model answers.
@@ -104,7 +111,7 @@ def ask(user_text, on_sentence=None):
     for _ in range(6):
         stream = ollama.chat(                # stream=True returns small chunks as they are generated.
             model=CHAT,
-            messages=[{"role": "system", "content": system_prompt()}] + history,
+            messages=[{"role": "system", "content": system_prompt(memories)}] + history,
             tools=list(TOOLS.values()),
             think=THINK,
             keep_alive=KEEP_ALIVE,

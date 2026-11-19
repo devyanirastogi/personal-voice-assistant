@@ -1,5 +1,6 @@
 from datetime import datetime
 import db # Refers to the db.py file in this folder, which contains functions for storing and retrieving appointments
+import memory
 
 def _check_date(text):
     """Return True if the text looks like "YYYY-MM-DD HH:MM" ."""
@@ -65,3 +66,13 @@ def delete_appointment(appointment_id: int) -> dict:
     if db.remove_appointment(appointment_id):        # True only if a row really was deleted
         return {"success": True, "deleted_id": appointment_id}
     return {"success": False, "error": f"no appointment with id {appointment_id}"}
+
+def remember(fact: str) -> dict:
+    """Save a lasting personal fact or preference about the user, when the user asks you to remember something.
+    Never use this for appointments or bookings.
+
+    Args:
+        fact: The fact written as one short sentence starting with "The user".
+    """
+    saved = memory.remember(fact)            # False just means it was already known.
+    return {"success": True, "saved": saved}

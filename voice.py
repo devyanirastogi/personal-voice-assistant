@@ -7,6 +7,7 @@ import speech                                # The voice.
 from audio_in import listen_utterances       # Microphone to utterances.
 from stt import transcribe                   # Utterance to text.
 from wake import extract_command             # Wake word logic.
+import memory                                # Store and retrieve personal facts.
 
 config = tomllib.loads(Path("config.toml").read_text())
 FOLLOW_UP = config["wake"]["follow_up_seconds"]      # 8 seconds without needing the wake word.
@@ -52,6 +53,7 @@ def handle(text):
     print(f"   [reply] {reply}")                            # Show what Loop said, for the check.
     speech.wait_until_done()                 # Wait for the voice to finish before listening again.
     needs_flush = True                          # The microphone should discard any audio that arrived while Loop was talking.
+    memory.extract_in_background(command)
     awake_until = time.time() + FOLLOW_UP    # The window starts when the reply ENDS.
 
 
