@@ -54,7 +54,9 @@ Rules:
 - Answer only what was asked. Do not add extra questions or offers.
 - Reply in one or two short sentences. No lists, no markdown, because your reply will be spoken aloud.
 - When the user asks you to remember something, call the remember tool.
-- Use the remembered facts to answer questions about the user's preferences."""
+- Use the remembered facts to answer questions about the user's preferences.
+- When you book an appointment, always say its id from the tool result in your reply.
+- Reply with the short answer only. Never explain your reasoning or mention earlier messages."""
 
 def recent_user_text(last_n=3):
     """Return the user's last few messages joined into one lowercase string."""
@@ -115,7 +117,7 @@ def ask(user_text, on_sentence=None, trace=None):
             tools=list(TOOLS.values()),
             think=THINK,
             keep_alive=KEEP_ALIVE,
-            options={"num_ctx": CONTEXT},
+            options={"num_ctx": CONTEXT, "num_predict": 150},
             stream=True,
         )
         content = ""                         # The full reply text, built up from chunks.
